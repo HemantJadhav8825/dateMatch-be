@@ -5,7 +5,7 @@ const socketIO = require('socket.io');
 const jwt = require('jsonwebtoken');
 const callRouter = require('./routes/call');
 const { initSocket } = require('./socket');
-
+require('dotenv').config();
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server, {
@@ -58,6 +58,6 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(3003, () => {
+server.listen(process.env.PORT || 5004, () => {
   console.log('Call service running on port 3003');
 });

@@ -14,6 +14,8 @@ const userRoutes = require('./routes/users');
 
 app.use('/users', userRoutes);
 
+app.get('/health', (_req, res) => res.json({ ok: true }));
+
 mongoose.connect(process.env.MONGO_URI).then(() => console.log('User Mongo connected'));
 
 function auth(req, res, next) {
