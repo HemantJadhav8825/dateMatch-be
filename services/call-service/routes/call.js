@@ -2,11 +2,11 @@
 const express = require('express');
 const callRouter = express.Router();
 const CallSession = require('../models/CallSession');
-const { verifyAccessToken } = require('../middleware/auth'); // Your JWT middleware
+// const { verifyAccessToken } = require('../middleware/auth'); // Your JWT middleware
 const { notifyUser } = require('../socket');
 
 // Accept call
-callRouter.post('/:id/accept', verifyAccessToken, async (req, res) => {
+callRouter.post('/:id/accept', /* verifyAccessToken, */ async (req, res) => {
   try {
     const session = await CallSession.findById(req.params.id);
 
@@ -33,7 +33,7 @@ callRouter.post('/:id/accept', verifyAccessToken, async (req, res) => {
 });
 
 // Reject call
-callRouter.post('/:id/reject', verifyAccessToken, async (req, res) => {
+callRouter.post('/:id/reject', /* verifyAccessToken, */ async (req, res) => {
   try {
     const session = await CallSession.findById(req.params.id);
 
