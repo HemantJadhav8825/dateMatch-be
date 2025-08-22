@@ -10,6 +10,10 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+const userRoutes = require('./routes/users');
+
+app.use('/users', userRoutes);
+
 mongoose.connect(process.env.MONGO_URI).then(() => console.log('User Mongo connected'));
 
 function auth(req, res, next) {
