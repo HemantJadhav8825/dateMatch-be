@@ -27,3 +27,6 @@ A sends offer → call-service relays to B.
 B sends answer → relayed to A.
 ICE candidates exchanged.
 Call established peer-to-peer (encrypted).
+
+
+lsof -ti:4000 -ti:5001 -ti:5002 -ti:5003 -ti:5004 -ti:5005 | xargs kill -9

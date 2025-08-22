@@ -1,0 +1,73 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start Gateway",
+      "type": "shell",
+      "command": "nodemon index.js",
+      "problemMatcher": ["$eslint-stylish"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "silent",
+        "echo": true,
+        "focus": true
+      },
+      "cwd": "${workspaceFolder}/gateway"
+    },
+    {
+      "label": "Start Call Service",
+      "type": "shell",
+      "command": "nodemon index.js",
+      "problemMatcher": ["$eslint-stylish"],
+      "group": "build",
+      "presentation": {
+        "reveal": "silent",
+        "echo": true,
+        "focus": true
+      },
+      "cwd": "${workspaceFolder}/services/call-service"
+    },
+    {
+      "label": "Start Match Service",
+      "type": "shell",
+      "command": "nodemon index.js",
+      "problemMatcher": ["$eslint-stylish"],
+      "group": "build",
+      "presentation": {
+        "reveal": "silent",
+        "echo": true,
+        "focus": true
+      },
+      "cwd": "${workspaceFolder}/services/match-service"
+    },
+    {
+      "label": "Start Payment Service",
+      "type": "shell",
+      "command": "nodemon index.js",
+      "problemMatcher": ["$eslint-stylish"],
+      "group": "build",
+      "presentation": {
+        "reveal": "silent",
+        "echo": true,
+        "focus": true
+      },
+      "cwd": "${workspaceFolder}/services/payment-service"
+    },
+    {
+      "label": "Start User Service",
+      "type": "shell",
+      "command": "nodemon index.js",
+      "problemMatcher": ["$eslint-stylish"],
+      "group": "build",
+      "presentation": {
+        "reveal": "silent",
+        "echo": true,
+        "focus": true
+      },
+      "cwd": "${workspaceFolder}/services/user-service"
+    }
+  ]
+}

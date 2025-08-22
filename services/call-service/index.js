@@ -21,6 +21,8 @@ app.use('/call', callRouter);
 
 initSocket(io);
 
+app.get('/health', (_req, res) => res.json({ ok: true }));
+
 // Authenticate socket connection
 io.use((socket, next) => {
   const token = socket.handshake.auth?.token;
@@ -59,5 +61,5 @@ io.on('connection', (socket) => {
 });
 
 server.listen(process.env.PORT || 5004, () => {
-  console.log('Call service running on port 3003');
+  console.log('Call service running on port 5004');
 });

@@ -10,18 +10,18 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-const rz = new Razorpay({ key_id: process.env.RAZORPAY_KEY_ID, key_secret: process.env.RAZORPAY_KEY_SECRET });
+// const rz = new Razorpay({ key_id: process.env.RAZORPAY_KEY_ID, key_secret: process.env.RAZORPAY_KEY_SECRET });
 
-app.get('/payment/health', (_, res) => res.json({ ok: true }));
+app.get('/health', (_, res) => res.json({ ok: true }));
 
-app.post('/payment/create-order', async (req, res) => {
-  const { amount, userId, type } = req.body || {};
-  if (!amount || !userId || !type) return res.status(400).json({ error: 'amount,userId,type required' });
-  const order = await rz.orders.create({ amount, currency: 'INR' });
-  await pool.query('INSERT INTO transactions(user_id,type,amount,status,gateway_ref) VALUES($1,$2,$3,$4,$5)',
-    [userId, type, amount, 'created', order.id]);
-  res.json({ orderId: order.id, amount: order.amount, currency: order.currency });
-});
+// app.post('/payment/create-order', async (req, res) => {
+//   const { amount, userId, type } = req.body || {};
+//   if (!amount || !userId || !type) return res.status(400).json({ error: 'amount,userId,type required' });
+//   const order = await rz.orders.create({ amount, currency: 'INR' });
+//   await pool.query('INSERT INTO transactions(user_id,type,amount,status,gateway_ref) VALUES($1,$2,$3,$4,$5)',
+//     [userId, type, amount, 'created', order.id]);
+//   res.json({ orderId: order.id, amount: order.amount, currency: order.currency });
+// });
 
 app.post('/payment/confirm', async (req, res) => {
   // Client-side SDK hits this with signature details OR handle via webhook below.
