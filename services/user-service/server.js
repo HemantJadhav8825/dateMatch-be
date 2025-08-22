@@ -28,4 +28,8 @@ app.patch('/user/me', auth, async (req, res) => {
   res.json(me);
 });
 
+// services/user-service/server.js
+require('./cron/resetDailyLimits');
+
+
 app.listen(process.env.PORT || 5002, () => console.log('User service on :' + (process.env.PORT || 5002)));

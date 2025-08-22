@@ -1,16 +1,15 @@
 const mongoose = require('mongoose');
-
 const UserSchema = new mongoose.Schema({
-  phone: { type: String, unique: true, required: true },
-  nickname: { type: String, default: '' },
-  avatarType: { type: String, default: 'generated' },
+  phone: { type: String, unique: true },
+  nickname: String,
+  avatarType: String,
   avatarUrl: String,
   languages: [String],
   interests: [String],
   region: String,
-  subscription: { tier: { type: String, default: 'free' }, expiresAt: Date },
-  limits: { dailyCalls: { type: Number, default: 3 }, lastReset: Date },
-  flags: { banned: { type: Boolean, default: false }, shadow: { type: Boolean, default: false } }
+  subscription: { tier: String, expiresAt: Date },
+  limits: { dailyCalls: Number, lastReset: Date },
+  flags: { banned: Boolean, shadow: Boolean }
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', UserSchema);
