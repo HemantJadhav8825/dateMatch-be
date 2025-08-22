@@ -3,6 +3,7 @@ const express = require('express');
 const callRouter = express.Router();
 const CallSession = require('../models/CallSession');
 const { verifyAccessToken } = require('../middleware/auth'); // Your JWT middleware
+const { notifyUser } = require('../socket');
 
 // Accept call
 callRouter.post('/:id/accept', verifyAccessToken, async (req, res) => {
@@ -15,6 +16,12 @@ callRouter.post('/:id/accept', verifyAccessToken, async (req, res) => {
     session.status = 'accepted';
     session.acceptedAt = new Date();
     await session.save();
+    // inside accept endpoint after saving
+    notifyUser(session.callerId.toString(), 'call_update', {
+      sessionId: session._id,
+      status: 'accepted',
+      acceptedAt: session.acceptedAt
+    });
 
     // Optional: Notify caller via WebSocket/Push
     // notifyUser(session.callerId, 'Call accepted', session._id);
@@ -36,6 +43,12 @@ callRouter.post('/:id/reject', verifyAccessToken, async (req, res) => {
     session.status = 'rejected';
     session.rejectedAt = new Date();
     await session.save();
+    // inside reject endpoint after saving
+    notifyUser(session.callerId.toString(), 'call_update', {
+      sessionId: session._id,
+      status: 'rejected',
+      rejectedAt: session.rejectedAt
+    });
 
     // Optional: Notify caller via WebSocket/Push
     // notifyUser(session.callerId, 'Call rejected', session._id);

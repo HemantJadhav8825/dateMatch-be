@@ -4,6 +4,7 @@ const http = require('http');
 const socketIO = require('socket.io');
 const jwt = require('jsonwebtoken');
 const callRouter = require('./routes/call');
+const { initSocket } = require('./socket');
 
 const app = express();
 const server = http.createServer(app);
@@ -17,6 +18,8 @@ const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
 app.use((req, res, next) => { req.io = io; next(); });
 
 app.use('/call', callRouter);
+
+initSocket(io);
 
 // Authenticate socket connection
 io.use((socket, next) => {
