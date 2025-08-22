@@ -1,29 +1,57 @@
+// services/call-service/server.js
 const express = require('express');
 const http = require('http');
-const cors = require('cors');
-const { Server } = require('socket.io');
+const socketIO = require('socket.io');
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
 
 const app = express();
-app.use(cors());
-app.get('/call/health', (_, res) => res.json({ ok: true }));
-
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: '*' } });
+const io = socketIO(server, {
+  cors: { origin: '*' }
+});
 
-io.of('/signaling').use((socket, next) => {
+const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
+
+// in server.js
+app.use((req, res, next) => { req.io = io; next(); });
+
+// Authenticate socket connection
+io.use((socket, next) => {
   const token = socket.handshake.auth?.token;
-  try { socket.user = jwt.verify(token, process.env.JWT_SECRET); next(); }
-  catch { next(new Error('unauthorized')); }
+  if (!token) return next(new Error('Authentication required'));
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    socket.user = decoded; // attach user to socket
+    next();
+  } catch (err) {
+    next(new Error('Invalid token'));
+  }
 });
 
-io.of('/signaling').on('connection', (socket) => {
-  socket.on('join', ({ room }) => { socket.join(room); socket.to(room).emit('peer.joined'); });
-  socket.on('offer', ({ room, sdp }) => socket.to(room).emit('offer', { sdp }));
-  socket.on('answer', ({ room, sdp }) => socket.to(room).emit('answer', { sdp }));
-  socket.on('ice', ({ room, candidate }) => socket.to(room).emit('ice', { candidate }));
-  socket.on('end', ({ room, reason }) => io.of('/signaling').to(room).emit('ended', { reason }));
+io.on('connection', (socket) => {
+  console.log('User connected:', socket.user.userId);
+
+  socket.on('offer', (data) => {
+    // data: { to: userId, sdp }
+    io.to(data.to).emit('offer', { from: socket.user.userId, sdp: data.sdp });
+  });
+
+  socket.on('answer', (data) => {
+    // data: { to: userId, sdp }
+    io.to(data.to).emit('answer', { from: socket.user.userId, sdp: data.sdp });
+  });
+
+  socket.on('ice-candidate', (data) => {
+    // data: { to: userId, candidate }
+    io.to(data.to).emit('ice-candidate', { from: socket.user.userId, candidate: data.candidate });
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.user.userId);
+  });
 });
 
-server.listen(process.env.PORT || 5004, () => console.log('Call service on :' + (process.env.PORT || 5004)));
+server.listen(3003, () => {
+  console.log('Call service running on port 3003');
+});
