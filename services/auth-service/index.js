@@ -94,7 +94,7 @@ app.post('/auth/otp/verify', otpLimiter, async (req, res) => {
 
     // Persist refresh token (rotation-ready)
     const refreshExp = dayjs().add(
-      Number((process.env.REFRESH_TTL || '30d').replace('d','')) || 30,
+      Number((process.env.REFRESH_TTL || '30d').replace('d', '')) || 30,
       'day'
     ).toDate();
 
@@ -139,7 +139,7 @@ app.post('/auth/token/refresh', async (req, res) => {
     const newAccess = signAccess({ uid: payload.uid }, process.env.JWT_SECRET);
     const newRefresh = signRefresh({ uid: payload.uid }, process.env.JWT_SECRET);
     const newExp = dayjs().add(
-      Number((process.env.REFRESH_TTL || '30d').replace('d','')) || 30,
+      Number((process.env.REFRESH_TTL || '30d').replace('d', '')) || 30,
       'day'
     ).toDate();
 
