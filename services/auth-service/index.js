@@ -39,7 +39,7 @@ app.post('/otp/start', otpLimiter, async (req, res) => {
     if (!phone) return res.status(400).json({ error: 'phone required' });
 
     const code = process.env.OTP_STRATEGY === 'dev'
-      ? '123456'
+      ? '1234'
       : String(Math.floor(100000 + Math.random() * 900000));
 
     const requestId = uuid();

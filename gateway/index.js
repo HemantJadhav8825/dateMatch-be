@@ -10,15 +10,28 @@ app.use(cors({ origin: '*' }));
 app.use(morgan('dev'));
 app.use(rateLimit({ windowMs: 60_000, max: 300 }));
 
-// health
+// Health check
 app.get('/health', (_, res) => res.json({ ok: true }));
 
-// proxy map
-app.use('/auth', createProxyMiddleware({ target: 'http://127.0.0.1:5001', changeOrigin: true }));
-app.use('/user', createProxyMiddleware({ target: 'http://127.0.0.1:5002', changeOrigin: true }));
-app.use('/match', createProxyMiddleware({ target: 'http://127.0.0.1:5003', changeOrigin: true }));
-app.use('/call', createProxyMiddleware({ target: 'http://127.0.0.1:5004', changeOrigin: true }));
-app.use('/payment', createProxyMiddleware({ target: 'http://127.0.0.1:5005', changeOrigin: true }));
+// Define proxy routes based on ENV variables
+const proxyRoutes = {
+  '/auth': process.env.PROXY_AUTH,
+  '/user': process.env.PROXY_USER,
+  '/match': process.env.PROXY_MATCH,
+  '/call': process.env.PROXY_CALL,
+  '/payment': process.env.PROXY_PAYMENT
+};
 
+// Register proxy middleware for each route
+for (const [route, target] of Object.entries(proxyRoutes)) {
+  if (target) {
+    app.use(route, createProxyMiddleware({ target, changeOrigin: true }));
+    console.log(`Proxy setup: ${route} → ${target}`);
+  } else {
+    console.warn(`No target defined for route: ${route}`);
+  }
+}
+
+// Start server
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log('Gateway on :' + PORT));
