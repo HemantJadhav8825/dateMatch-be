@@ -33,7 +33,7 @@ const sendSMS = smsSender(process.env);
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
 // --- OTP: start ---
-app.post('/auth/otp/start', otpLimiter, async (req, res) => {
+app.post('/otp/start', otpLimiter, async (req, res) => {
   try {
     const { phone } = req.body || {};
     if (!phone) return res.status(400).json({ error: 'phone required' });
@@ -59,7 +59,7 @@ app.post('/auth/otp/start', otpLimiter, async (req, res) => {
 });
 
 // --- OTP: verify -> issue tokens ---
-app.post('/auth/otp/verify', otpLimiter, async (req, res) => {
+app.post('/otp/verify', otpLimiter, async (req, res) => {
   try {
     const { phone, requestId, code } = req.body || {};
     if (!phone || !requestId || !code) {
@@ -118,7 +118,7 @@ app.post('/auth/otp/verify', otpLimiter, async (req, res) => {
 });
 
 // --- Refresh (rotation) ---
-app.post('/auth/token/refresh', async (req, res) => {
+app.post('/token/refresh', async (req, res) => {
   try {
     const { refreshToken } = req.body || {};
     if (!refreshToken) return res.status(400).json({ error: 'missing_refresh' });
@@ -159,7 +159,7 @@ app.post('/auth/token/refresh', async (req, res) => {
 });
 
 // --- Logout (revoke current refresh) ---
-app.post('/auth/logout', async (req, res) => {
+app.post('/logout', async (req, res) => {
   const { refreshToken } = req.body || {};
   if (!refreshToken) return res.status(400).json({ error: 'missing_refresh' });
   try {
@@ -183,7 +183,7 @@ function auth(req, res, next) {
   try { req.user = verifyToken(token, process.env.JWT_SECRET); next(); }
   catch { return res.status(401).json({ error: 'unauthorized' }); }
 }
-app.get('/auth/me', auth, async (req, res) => {
+app.get('/me', auth, async (req, res) => {
   const user = await User.findById(req.user.uid).lean();
   res.json({ user });
 });
