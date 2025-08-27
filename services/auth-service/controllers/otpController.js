@@ -14,6 +14,7 @@ exports.startOtp = async (req, res) => {
     try {
         const { phone } = req.body || {};
         if (!phone) return res.status(400).json({ error: 'phone required' });
+        if (!/^\d{10}$/.test(phone)) return res.status(400).json({ error: 'Phone number must be exactly 10 digits.' });
 
         const code = process.env.OTP_STRATEGY === 'dev'
             ? '1234'
