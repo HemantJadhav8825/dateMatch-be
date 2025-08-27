@@ -4,7 +4,7 @@ const connectToMongo = require('./config/db');
 const app = require('./app');
 const { initSockets } = require('./services/socketService');
 
-const PORT = process.env.PORT || 5004;
+const PORT = process.env.PORT;
 
 const server = http.createServer(app);
 initSockets(server); // initialize socket.io namespaces

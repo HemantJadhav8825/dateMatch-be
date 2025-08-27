@@ -33,5 +33,5 @@ for (const [route, target] of Object.entries(proxyRoutes)) {
 }
 
 // Start server
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT;
 app.listen(PORT, () => console.log('Gateway on :' + PORT));

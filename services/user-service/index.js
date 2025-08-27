@@ -1,7 +1,7 @@
 require('dotenv').config();
 const connectToMongo = require('./config/db');
 const app = require('./app');
-const PORT = process.env.PORT || 5002;
+const PORT = process.env.PORT;
 
 connectToMongo((mongoose) => {
   const dbName = mongoose.connection.name;
