@@ -2,6 +2,7 @@
 const express = require('express');
 const User = require('../models/User');
 const auth = require('../middlewares/auth');
+const { validateUserUpdate } = require('../utils/index');
 
 const router = express.Router();
 
@@ -17,8 +18,14 @@ router.get('/me', auth, async (req, res) => {
 
 // Update current user
 router.patch('/me', auth, async (req, res) => {
+  const { valid, data, errors } = validateUserUpdate(req.body);
+
+  if (!valid) {
+    return res.status(400).json({ error: 'invalid_input', details: errors });
+  }
+
   try {
-    const me = await User.findByIdAndUpdate(req.user.uid, req.body, { new: true });
+    const me = await User.findByIdAndUpdate(req.user.uid, data, { new: true });
     res.json(me);
   } catch (err) {
     res.status(500).json({ error: 'failed_update_user' });
