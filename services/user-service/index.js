@@ -1,41 +1,11 @@
-const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
 require('dotenv').config();
-const User = require('./models/User');
+const connectToMongo = require('./config/db');
+const app = require('./app');
+const PORT = process.env.PORT || 5002;
 
-const app = express();
-app.use(cors());
-app.use(bodyParser.json());
-
-const userRoutes = require('./routes/users');
-
-app.use('/users', userRoutes);
-
-app.get('/health', (_req, res) => res.json({ ok: true }));
-
-mongoose.connect(process.env.MONGO_URI).then(() => console.log('User Mongo connected'));
-
-function auth(req, res, next) {
-  const h = req.headers.authorization || '';
-  const token = h.replace('Bearer ', '');
-  try { req.user = jwt.verify(token, process.env.JWT_SECRET); next(); }
-  catch { return res.status(401).json({ error: 'unauthorized' }); }
-}
-
-app.get('/user/me', auth, async (req, res) => {
-  const me = await User.findById(req.user.uid);
-  res.json(me);
+connectToMongo((mongoose) => {
+  const dbName = mongoose.connection.name;
+  app.listen(PORT, () => console.log({ success: `Mongo connected with db = ${dbName} & user-service started on port:${PORT}` }));
+}).catch(err => {
+  console.error('Mongo connection error:', err);
 });
-app.patch('/user/me', auth, async (req, res) => {
-  const me = await User.findByIdAndUpdate(req.user.uid, req.body, { new: true, upsert: false });
-  res.json(me);
-});
-
-// services/user-service/server.js
-require('./cron/resetDailyLimits');
-
-
-app.listen(process.env.PORT || 5002, () => console.log('User service on :' + (process.env.PORT || 5002)));
