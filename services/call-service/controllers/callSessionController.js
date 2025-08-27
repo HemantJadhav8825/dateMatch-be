@@ -1,17 +1,10 @@
-const jwt = require('jsonwebtoken');
 const { createSession, updateSession, getSession } = require('../services/callSessionService');
-
-const JWT_SECRET = process.env.JWT_SECRET;
 
 exports.createCallSession = async (req, res) => {
   try {
-    const auth = (req.headers.authorization || '').replace('Bearer ', '');
-    if (!auth) return res.status(401).json({ error: 'missing_token' });
-
-    const payload = jwt.verify(auth, JWT_SECRET);
-    const callerId = payload.uid;
+    const callerId = req.user.uid;
     const { calleeId } = req.body;
-    if (!calleeId) return res.status(400).json({ error: 'missing calleeId' });
+    if (!calleeId) return res.status(400).json({ error: 'missing_calleeId' });
 
     const session = await createSession({
       callerId,
@@ -21,7 +14,6 @@ exports.createCallSession = async (req, res) => {
       initiatedAt: new Date()
     });
 
-    // Notify callee via socket
     const { io } = require('../services/socketService');
     io.of('/notify').to(calleeId).emit('incoming_call', {
       sessionId: session._id,
@@ -38,11 +30,7 @@ exports.createCallSession = async (req, res) => {
 
 exports.acceptCall = async (req, res) => {
   try {
-    const auth = (req.headers.authorization || '').replace('Bearer ', '');
-    if (!auth) return res.status(401).json({ error: 'missing_token' });
-
-    const payload = jwt.verify(auth, JWT_SECRET);
-    const userId = payload.uid;
+    const userId = req.user.uid;
     const sessionId = req.params.id;
     const session = await getSession(sessionId);
 
@@ -62,11 +50,7 @@ exports.acceptCall = async (req, res) => {
 
 exports.rejectCall = async (req, res) => {
   try {
-    const auth = (req.headers.authorization || '').replace('Bearer ', '');
-    if (!auth) return res.status(401).json({ error: 'missing_token' });
-
-    const payload = jwt.verify(auth, JWT_SECRET);
-    const userId = payload.uid;
+    const userId = req.user.uid;
     const sessionId = req.params.id;
     const session = await getSession(sessionId);
 
