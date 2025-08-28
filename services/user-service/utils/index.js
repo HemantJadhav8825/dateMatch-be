@@ -5,11 +5,12 @@ function isValidDate(val) {
 function validateUserUpdate(body) {
     const allowedFields = {
         nickname: val => typeof val === 'string',
+        gender: val => typeof val === 'string' && ['Male', 'Female', 'Other', ''].includes(val), // Added gender
         avatarType: val => typeof val === 'string',
         avatarUrl: val => typeof val === 'string',
         languages: val => Array.isArray(val) && val.every(item => typeof item === 'string'),
         interests: val => Array.isArray(val) && val.every(item => typeof item === 'string'),
-        region: val => typeof val === 'string',
+        region: val => typeof val === 'string', // keep or remove based on schema decision
         subscription: val =>
             typeof val === 'object' &&
             val !== null &&

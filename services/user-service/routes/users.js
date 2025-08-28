@@ -6,8 +6,7 @@ const User = require('../models/User');
 // services/user-service/routes/users.js
 router.get('/all', async (req, res) => {
   try {
-    const users = await User.find()
-      .select('_id nickname avatarType avatarUrl languages interests region');
+    const users = await User.find();
     
     res.json({ success: true, users });
   } catch (err) {
