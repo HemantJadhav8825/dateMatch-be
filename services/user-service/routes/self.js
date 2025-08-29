@@ -1,13 +1,12 @@
 // services/user-service/routes/self.js
 const express = require('express');
 const User = require('../models/User');
-const auth = require('../middlewares/auth');
 const { validateUserUpdate } = require('../utils/index');
 
 const router = express.Router();
 
 // Get current user
-router.get('/me', auth, async (req, res) => {
+router.get('/me', async (req, res) => {
   try {
     const me = await User.findById(req.user.uid);
     res.json(me);
@@ -17,7 +16,7 @@ router.get('/me', auth, async (req, res) => {
 });
 
 // Update current user
-router.patch('/me', auth, async (req, res) => {
+router.patch('/me', async (req, res) => {
   const { valid, data, errors } = validateUserUpdate(req.body);
 
   if (!valid) {

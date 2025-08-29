@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
+const auth = require('./middlewares/auth');
 
 // Import routes
 const userRoutes = require('./routes/users');
@@ -17,8 +18,8 @@ app.use(bodyParser.json());
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
 // Routes
-app.use('/users', userRoutes);
-app.use('/user', selfRoutes);
+app.use('/users', auth, userRoutes);
+app.use('/user', auth, selfRoutes);
 
 // Cron jobs
 require('./cron/resetDailyLimits');
