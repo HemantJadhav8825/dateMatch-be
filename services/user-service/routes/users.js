@@ -6,15 +6,15 @@ const User = require('../models/User');
 // services/user-service/routes/users.js
 router.get('/all', async (req, res) => {
   try {
-    const users = await User.find();
-    
-    res.json({ success: true, users });
+    const userId = req.user.uid;
+    const users = await User.find({ _id: { $ne: userId } });
+
+    res.json({ users, total: users.length });
   } catch (err) {
     console.error('Error fetching all users:', err);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 });
-
 
 router.post('/eligible-users', async (req, res) => {
   try {
