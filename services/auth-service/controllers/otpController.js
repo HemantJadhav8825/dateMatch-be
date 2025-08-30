@@ -66,8 +66,8 @@ exports.verifyOtp = async (req, res) => {
         await Otp.deleteMany({ phone });
 
         // Create tokens
-        const accessToken = signAccess({ uid: user.id }, process.env.JWT_SECRET);
-        const refreshToken = signRefresh({ uid: user.id }, process.env.JWT_SECRET);
+        const accessToken = signAccess({ uid: user._id }, process.env.JWT_SECRET);
+        const refreshToken = signRefresh({ uid: user._id }, process.env.JWT_SECRET);
 
         // Persist refresh token (rotation-ready)
         const refreshExp = dayjs().add(
@@ -86,7 +86,7 @@ exports.verifyOtp = async (req, res) => {
         res.json({
             accessToken,
             refreshToken,
-            user: { id: user.id, phone: user.phone }
+            user
         });
     } catch (e) {
         console.error(e);
