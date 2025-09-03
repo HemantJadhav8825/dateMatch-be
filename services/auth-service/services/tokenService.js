@@ -3,7 +3,7 @@ require('dotenv').config();
 
 function signAccess(payload, secret, opts = {}) {
   return jwt.sign(payload, secret, {
-    expiresIn: process.env.ACCESS_TTL || '15m',
+    expiresIn: process.env.ACCESS_TTL,
     issuer: process.env.ISSUER || 'voice-first',
     ...opts
   });
@@ -11,7 +11,7 @@ function signAccess(payload, secret, opts = {}) {
 
 function signRefresh(payload, secret, opts = {}) {
   return jwt.sign({ ...payload, rt: true }, secret, {
-    expiresIn: process.env.REFRESH_TTL || '30d',
+    expiresIn: process.env.REFRESH_TTL,
     issuer: process.env.ISSUER || 'voice-first',
     ...opts
   });
