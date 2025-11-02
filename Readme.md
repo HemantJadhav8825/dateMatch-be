@@ -17,7 +17,9 @@ POST /match/find with Authorization: Bearer <token>
 Create payment order
 POST /payment/create-order → { "amount": 19900, "userId":"<uid>", "type":"subscription" }
 
-MONGO_URI=mongodb+srv://pappusheth:6P%23m%405qW7b3S9-%25@cluster0.zjfovlk.mongodb.net/dating_auth?retryWrites=true&w=majority&appName=Cluster0
+# MongoDB Connection String
+# Instead of hardcoded credentials, configure MONGO_URI in each service's .env file
+# Example format: mongodb+srv://username:password@cluster.mongodb.net/database?options
 
 
 # signaling
